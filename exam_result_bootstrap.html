@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>{{ course.name }} - Exam Result</h2>
+
+    {% if total_score >= 80 %}
+    <div class="alert alert-success">
+        <h4>Congratulations! 🎉</h4>
+        <p>You passed the exam with a score of <strong>{{ total_score }}</strong>!</p>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <h4>Keep Trying!</h4>
+        <p>Your score is <strong>{{ total_score }}</strong>. You need 80% to pass.</p>
+    </div>
+    {% endif %}
+
+    <h4>Your Answers</h4>
+    {% for question in course.question_set.all %}
+    <div class="card mb-3">
+        <div class="card-header">
+            {{ question.question_text }}
+        </div>
+        <div class="card-body">
+            {% for choice in question.choice_set.all %}
+            <div class="form-check">
+                {% if choice.id in selected_ids %}
+                    {% if choice.is_correct %}
+                    <span class="badge badge-success">✔ {{ choice.choice_text }}</span>
+                    {% else %}
+                    <span class="badge badge-danger">✘ {{ choice.choice_text }}</span>
+                    {% endif %}
+                {% else %}
+                    <span class="text-muted">{{ choice.choice_text }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <a href="{% url 'onlinecourse:course_details' course.id %}" class="btn btn-secondary">Back to Course</a>
+</div>
+</body>
+</html>
